@@ -3,6 +3,7 @@ package com.bappi.supershopmanagementsystem.controller;
 import com.bappi.supershopmanagementsystem.dto.UserDto;
 import com.bappi.supershopmanagementsystem.dto.UserRegistrationDto;
 import com.bappi.supershopmanagementsystem.mapper.UserMapper;
+import com.bappi.supershopmanagementsystem.model.ProductCart;
 import com.bappi.supershopmanagementsystem.model.User;
 import com.bappi.supershopmanagementsystem.service.UserService;
 import com.bappi.supershopmanagementsystem.utils.Constants;
@@ -24,12 +25,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/auth/v1")
-@SessionAttributes({"userId", "username","role"})
+@SessionAttributes({"userId", "username", "role", "cart"})
 public class Authentication {
 
     private final UserService userService;
     private final UserValidator userValidator;
     private final UserMapper userMapper;
+    private final ProductCart cart;
 
     private Logger logger = LoggerFactory.getLogger(Authentication.class);
 
@@ -42,7 +44,7 @@ public class Authentication {
     public String registerUser(@ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, @RequestParam("confirmPassword") String confirmPassword, Model model) {
         User user = userMapper.toEntity(userRegistrationDto);
         Map<String, String> errors = userValidator.validateRegistration(user, confirmPassword);
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "registration";
         }
@@ -60,29 +62,29 @@ public class Authentication {
     @PostMapping("/login")
     public String loginUser(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
         Map<String, String> errors = userValidator.validateLogin(username, password);
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "login";
         }
 
         UserDto userDto = userService.findByUsername(username);
 
-        if(userDto != null && PasswordHashing.checkPassword(password, userDto.getPassword())) {
+        if (userDto != null && PasswordHashing.checkPassword(password, userDto.getPassword())) {
             model.addAttribute("userId", userDto.getId());
             model.addAttribute("username", username);
             model.addAttribute("role", userDto.getRole());
+            cart.initCart();
+            model.addAttribute("cart", cart);
 
             return "redirect:/api/v1/dashboard";
-        }
-        else{
+        } else {
             model.addAttribute("error", Constants.ErrorMessage.LOGIN);
             return "login";
         }
     }
 
     @RequestMapping("/logout")
-    public String logout(HttpSession session)
-    {
+    public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/auth/v1/login";
     }

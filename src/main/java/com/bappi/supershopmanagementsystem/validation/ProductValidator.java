@@ -22,4 +22,13 @@ public class ProductValidator {
         }
         return errors;
     }
+
+    public String validateCartItemQuantity(double quantity, double stockQuanttity) {
+        if(NumberUtils.isNullOrInvalid(quantity))
+            return "Quantity should be a positive number";
+        else if(quantity > stockQuanttity)
+            return "Quantity cannot be greater than stock quantity";
+        else
+            return null;
+    }
 }
