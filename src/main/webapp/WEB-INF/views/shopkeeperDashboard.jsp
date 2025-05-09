@@ -113,8 +113,8 @@
         <ul>
             <li><a href="/api/v1/dashboard">Home</a></li>
             <li><a href="/api/v1/product/form">Add New Product</a></li>
-            <li><a href="/product?action=productCart">Cart</a></li>
-            <li><a href="/product?action=saleRecords">Sale Records</a></li>
+            <li><a href="/api/v1/product/cart">Cart</a></li>
+            <li><a href="/api/v1/product/saleRecords">Sale Records</a></li>
             <li><h1>${sessionScope.username}</h1></li>
             <li><a href="/auth/v1/logout"><h1>Logout</h1></a></li>
         </ul>
@@ -141,7 +141,7 @@
                 <td>${product.price}</td>
                 <td>${product.stockQuantity}</td>
                 <td><button><a href="/api/v1/product/update?id=${product.id}">Update</a></button></td>
-                <td><form action="/productCart?action=add&productId=${product.id}" method="post">
+                <td><form action="/api/v1/product/cart/add?id=${product.id}" method="post">
                     <input type="number" name="quantity" placeholder="Enter Quantity" required>
                     <button type="submit">Add</button>
                 </form></td>

@@ -3,6 +3,7 @@ package com.bappi.supershopmanagementsystem.controller;
 import com.bappi.supershopmanagementsystem.dto.UserInfoDto;
 import com.bappi.supershopmanagementsystem.enums.ApprovalStatus;
 import com.bappi.supershopmanagementsystem.model.Product;
+import com.bappi.supershopmanagementsystem.model.ProductCart;
 import com.bappi.supershopmanagementsystem.model.User;
 import com.bappi.supershopmanagementsystem.service.ProductService;
 import com.bappi.supershopmanagementsystem.service.UserService;
@@ -18,6 +19,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@SessionAttributes("cart")
 public class DashboardController {
 
     private final Logger logger = LoggerFactory.getLogger(DashboardController.class);

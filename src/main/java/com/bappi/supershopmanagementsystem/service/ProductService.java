@@ -5,6 +5,7 @@ import com.bappi.supershopmanagementsystem.dto.ProductDto;
 import com.bappi.supershopmanagementsystem.model.Product;
 import com.bappi.supershopmanagementsystem.model.User;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class ProductService {
 
     private final ProductDao productDao;
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     public void save(int userId, ProductDto productDto){
         User user = userService.findById(userId);
@@ -28,8 +30,8 @@ public class ProductService {
         return productDao.findById(id);
     }
 
-    public void updateById(ProductDto productDto, int id){
-        productDao.update(productDto, id);
+    public void update(Product product){
+        productDao.update(product);
     }
 
     public List findByUserId(int userId){

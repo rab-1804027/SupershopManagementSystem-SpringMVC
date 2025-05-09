@@ -101,8 +101,8 @@
     <ul>
       <li><a href="/api/v1/dashboard">Home</a></li>
       <li><a href="/api/v1/product/form">Add New Product</a></li>
-      <li><a href="/product?action=productCart">Cart</a></li>
-      <li><a href="/product?action=saleRecords">Sale Records</a></li>
+      <li><a href="/api/v1/product/cart">Cart</a></li>
+      <li><a href="/api/v1/product/saleRecords">Sale Records</a></li>
       <li><h1>${sessionScope.username}</h1></li>
       <li><a href="/auth/v1/logout"><h1>Logout</h1></a></li>
     </ul>

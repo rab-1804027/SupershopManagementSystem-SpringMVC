@@ -22,13 +22,13 @@ public class ProductDao {
         return entityManager.find(Product.class, id);
     }
 
-    public void update(ProductDto productDto, int id){
+    public void update(Product product){
         String query = "UPDATE Product p SET p.name = :name, p.price = :price, p.stockQuantity = :stockQuantity WHERE p.id = :id";
         entityManager.createQuery(query)
-                .setParameter("name", productDto.getName())
-                .setParameter("price", productDto.getPrice())
-                .setParameter("stockQuantity", productDto.getStockQuantity())
-                .setParameter("id", id)
+                .setParameter("name", product.getName())
+                .setParameter("price", product.getPrice())
+                .setParameter("stockQuantity", product.getStockQuantity())
+                .setParameter("id", product.getId())
                 .executeUpdate();
 
     }
