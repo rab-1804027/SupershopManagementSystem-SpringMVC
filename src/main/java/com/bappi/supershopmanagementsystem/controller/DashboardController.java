@@ -25,9 +25,8 @@ public class DashboardController {
     private final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     private final UserService userService;
-    private final ProductService productService;
 
-    @GetMapping("/dashboard")
+    @RequestMapping(value = "/dashboard", method = {RequestMethod.GET, RequestMethod.POST})
     public String getDashboard(@SessionAttribute("userId") int userId, @SessionAttribute("role") String role, Model model) {
 
         switch (role){

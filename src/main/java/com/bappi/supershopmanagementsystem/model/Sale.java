@@ -1,5 +1,6 @@
 package com.bappi.supershopmanagementsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -7,6 +8,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "sales")
@@ -22,6 +24,9 @@ public class Sale {
     private User user;
     private double totalPrice;
     private LocalDateTime saleTime;
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "sale", fetch = FetchType.EAGER)
+//    private Set<SaleDetails> saleDetails;
 
     public Sale(User user, double totalPrice) {
         this.user = user;

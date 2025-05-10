@@ -1,5 +1,6 @@
 package com.bappi.supershopmanagementsystem.dto;
 
+import com.bappi.supershopmanagementsystem.utils.FormatTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,13 +20,7 @@ public class UserInfoDto {
         this.name = name;
         this.username = username;
         this.email = email;
-        this.registrationTime = formateTime(registrationTime);
-    }
-
-    private String formateTime(LocalDateTime time)
-    {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy HH:mm:ss");
-        return time.format(formatter);
+        this.registrationTime = FormatTime.formatTime(registrationTime);
     }
 
 
@@ -34,7 +29,7 @@ public class UserInfoDto {
     }
 
     public void setRegistrationTime(LocalDateTime registrationTime) {
-        this.registrationTime = formateTime(registrationTime);
+        this.registrationTime = FormatTime.formatTime(registrationTime);
     }
 
 }

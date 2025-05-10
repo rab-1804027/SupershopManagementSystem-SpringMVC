@@ -141,7 +141,7 @@
         <td>${sale.totalPrice}</td>
         <td>${sale.saleTime}</td>
         <td>
-          <form action="/getInvoicePdf" method="post" target="_blank">
+          <form action="/api/v1/product/invoice" method="get" target="_blank">
             <input type="hidden" name="saleId" value="${sale.id}">
             <button>GetInvoicePdf</button>
           </form>
