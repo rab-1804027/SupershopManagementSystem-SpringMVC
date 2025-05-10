@@ -1,18 +1,25 @@
 package com.bappi.supershopmanagementsystem.controller;
 
 import com.bappi.supershopmanagementsystem.dto.ProductDto;
+import com.bappi.supershopmanagementsystem.dto.SaleDetailsDto;
 import com.bappi.supershopmanagementsystem.dto.SaleDto;
 import com.bappi.supershopmanagementsystem.model.*;
 import com.bappi.supershopmanagementsystem.service.ProductService;
 import com.bappi.supershopmanagementsystem.service.SaleDetailsService;
 import com.bappi.supershopmanagementsystem.service.SaleService;
 import com.bappi.supershopmanagementsystem.service.UserService;
+import com.bappi.supershopmanagementsystem.utils.InvoicePdfGenerator;
 import com.bappi.supershopmanagementsystem.validation.ProductValidator;
+import com.bappi.supershopmanagementsystem.utils.FormatTime;
+
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +66,28 @@ public class ProductController {
         return "saleRecords";
     }
 
+    @RequestMapping(value = "/invoice", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<byte[]> getInvoice(@RequestParam("saleId") int saleId) throws Exception {
+
+        Sale sale = saleService.findById(saleId);
+        List<SaleDetailsDto> saleDetails = saleDetailsService.findAllBySale(sale);
+
+        byte[] pdfBytes = InvoicePdfGenerator.generateInvoicePdf(
+                saleDetails,
+                sale.getTotalPrice(),
+                FormatTime.formatTime(sale.getSaleTime())
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=Invoice_" + saleId + ".pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
     @PostMapping("/add")
     public String save(@ModelAttribute("productDto") ProductDto productDto, @SessionAttribute("userId") int userId, Model model){
          Map<String, String> errors = productValidator.validate(productDto.getName(), productDto.getPrice(), productDto.getStockQuantity());
@@ -89,7 +118,7 @@ public class ProductController {
         {
             logger.error("Quantity::{} is not valid for product::{}", quantity, product.getName());
             model.addAttribute("error", error);
-            return "redirect:/api/v1/dashboard";
+            return "forward:/api/v1/dashboard";
         }
 
         CartItem cartItem = new CartItem(product, quantity);
@@ -109,8 +138,6 @@ public class ProductController {
     @PostMapping("/cart/checkout")
     public String checkout(@SessionAttribute("cart") ProductCart cart, @SessionAttribute("userId") int userId, Model model){
 
-        System.out.println("cart.getTotalPrice()::"+cart.getTotalPrice());
-
         User user = userService.findById(userId);
         double totalPrice = cart.getTotalPrice();
 
@@ -121,7 +148,7 @@ public class ProductController {
         cart.clearCart();
         model.addAttribute("cart", cart);
 
-        return "redirect:/api/v1/dashboard";
+        return "forward:/api/v1/product/invoice?saleId=" + sale.getId();
     }
 
 }

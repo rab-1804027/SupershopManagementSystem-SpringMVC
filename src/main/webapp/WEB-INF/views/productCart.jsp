@@ -211,7 +211,7 @@
             await new Promise(resolve => setTimeout(resolve, 0));
 
             // Redirect to dashboard
-            window.location.href = '/dashboard';
+            window.location.href = '/api/v1/dashboard';
         } catch (error) {
             console.error('Error during checkout:', error);
         }

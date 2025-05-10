@@ -91,7 +91,4 @@ public class UserDao {
         }
     }
 
-    public List<Product> findProducts(User user) {
-        return entityManager.find(User.class, user).getProductList();
-    }
 }

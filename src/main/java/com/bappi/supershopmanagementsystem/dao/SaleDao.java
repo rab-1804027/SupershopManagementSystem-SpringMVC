@@ -22,10 +22,15 @@ public class SaleDao {
         return sale;
     }
 
+    public Sale findById(int id){
+        return entityManager.find(Sale.class, id);
+    }
+
     public List<Sale> findAllByUserId(int userId){
-        String query = "Select s From Sale s where s.user.id= :userId";
+        String query = "Select s From Sale s where s.user.id= :userId order by id desc";
         return entityManager.createQuery(query)
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
 }
