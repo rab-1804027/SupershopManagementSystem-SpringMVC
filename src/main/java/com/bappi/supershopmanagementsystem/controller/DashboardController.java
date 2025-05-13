@@ -2,14 +2,9 @@ package com.bappi.supershopmanagementsystem.controller;
 
 import com.bappi.supershopmanagementsystem.dto.UserInfoDto;
 import com.bappi.supershopmanagementsystem.enums.ApprovalStatus;
-import com.bappi.supershopmanagementsystem.model.Product;
-import com.bappi.supershopmanagementsystem.model.ProductCart;
-import com.bappi.supershopmanagementsystem.model.User;
-import com.bappi.supershopmanagementsystem.service.ProductService;
 import com.bappi.supershopmanagementsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +15,8 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @SessionAttributes("cart")
+@Slf4j
 public class DashboardController {
-
-    private final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     private final UserService userService;
 
@@ -42,6 +36,7 @@ public class DashboardController {
                 return "shopkeeperDashboard";
             }
             default -> {
+                model.addAttribute("error", "Your registration is not approved yet. Please contact the admin for more details. Thank you for your patience.");
                 return "login";
             }
 
@@ -53,7 +48,7 @@ public class DashboardController {
 
         String role = "Shopkeeper";
         userService.assignRole(username, role, ApprovalStatus.APPROVED);
-
+        log.info("Admin approved Shopkeeper: {} ", username);
         return "redirect:/api/v1/dashboard";
     }
 
@@ -62,7 +57,7 @@ public class DashboardController {
 
         String role = "null";
         userService.assignRole(username, role, ApprovalStatus.REJECTED);
-
+        log.info("Admin rejected Shopkeeper: {} ", username);
         return "redirect:/api/v1/dashboard";
     }
 

@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <style>
@@ -68,12 +69,16 @@
 <div class="Login">
     <h2>Login into SuperShop</h2>
     <h4 style="color: red;">${error}</h4>
-    <form action="/auth/v1/login" method="post">
-        <input type="text" name="username" placeholder="Enter Username" required>
-        ${errors.get("username")}
+    <c:if test="${not empty errors}">
+        <c:forEach var="error" items="${errors}">
+            <h4 style="color: red;">${error.defaultMessage}.</h4>
+        </c:forEach>
+    </c:if>
+
+    <form action="/api/v1/auth/login" method="post">
+        <input type="text" name="username" placeholder="Enter Username" >
         <br>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        ${errors.get("password")}
+        <input type="password" name="password" placeholder="Enter Password" >
         <br>
         <input type="submit" value="Login">
     </form>

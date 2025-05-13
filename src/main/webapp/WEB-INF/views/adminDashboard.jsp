@@ -107,7 +107,7 @@
         <nav>
             <ul>
                 <li><h1>${sessionScope.username}</h1></li>
-                <li><a href="/auth/v1/logout"><h1>Logout</h1></a></li>
+                <li><a href="/api/v1/auth/logout"><h1>Logout</h1></a></li>
             </ul>
         </nav>
     </div>

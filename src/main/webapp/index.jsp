@@ -10,7 +10,7 @@
 <br/>
 <a href="hello-servlet">Hello Servlet</a>
 <br>
-<button><a href="/auth/v1/login">Login</a></button>
-<button><a href="/auth/v1/registration">Register</a></button>
+<button><a href="/api/v1/auth/login">Login</a></button>
+<button><a href="/api/v1/auth/register">Register</a></button>
 </body>
 </html>

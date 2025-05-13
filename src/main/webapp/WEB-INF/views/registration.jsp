@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <style>
@@ -69,22 +70,25 @@
 
     <div class="RegistrationForm">
         <h1>Sign Up</h1>
-        <form action="/auth/v1/registration" method="post">
+        <c:if test="${not empty inputErrors}">
+            <c:forEach var="error" items="${inputErrors}">
+                <h4 style="color: red;">${error.defaultMessage}.</h4>
+            </c:forEach>
+        </c:if>
 
-            <input type="text" name="name" placeholder="Enter Your Name" required>
-            ${errors.get("name")}
+        <form action="/api/v1/auth/register" method="post">
+            <input type="text" name="name" placeholder="Enter Your Name" >
             <br>
-            <input type="email" name="email" placeholder="Enter Your Email Address" required>
+            <input type="email" name="email" placeholder="Enter Your Email Address" >
             ${errors.get("email")}
             <br>
-            <input type="text" name="username" placeholder="Enter a Username" required>
+            <input type="text" name="username" placeholder="Enter a Username" >
             ${errors.get("username")}
             <br>
-            <input type="password" name="password" placeholder="Set a Password" required>
-            ${errors.get("password")}
+            <input type="password" name="password" placeholder="Set a Password" >
             <br>
             ${inputUser}
-            <input type="password" name="confirmPassword" placeholder="Repeat the password" required>
+            <input type="password" name="confirmPassword" placeholder="Repeat the password" >
             ${errors.get("passwordMismatch")}
             <br>
             <input type="submit" value="Register">

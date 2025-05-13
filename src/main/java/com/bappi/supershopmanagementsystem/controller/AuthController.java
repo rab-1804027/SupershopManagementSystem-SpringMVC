@@ -1,5 +1,6 @@
 package com.bappi.supershopmanagementsystem.controller;
 
+import com.bappi.supershopmanagementsystem.dto.LoginDto;
 import com.bappi.supershopmanagementsystem.dto.UserDto;
 import com.bappi.supershopmanagementsystem.dto.UserRegistrationDto;
 import com.bappi.supershopmanagementsystem.mapper.UserMapper;
@@ -10,43 +11,51 @@ import com.bappi.supershopmanagementsystem.utils.Constants;
 import com.bappi.supershopmanagementsystem.utils.PasswordHashing;
 import com.bappi.supershopmanagementsystem.validation.UserValidator;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/auth/v1")
+@RequestMapping("/api/v1/auth")
 @SessionAttributes({"userId", "username", "role", "cart"})
-public class Authentication {
+@Slf4j
+public class AuthController {
 
     private final UserService userService;
     private final UserValidator userValidator;
     private final UserMapper userMapper;
     private final ProductCart cart;
+    private final ModelMapper modelMapper;
 
-    private Logger logger = LoggerFactory.getLogger(Authentication.class);
-
-    @GetMapping("/registration")
+    @GetMapping("/register")
     public String getRegistration() {
         return "registration";
     }
 
-    @PostMapping("/registration")
-    public String registerUser(@ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, @RequestParam("confirmPassword") String confirmPassword, Model model) {
-        User user = userMapper.toEntity(userRegistrationDto);
-        Map<String, String> errors = userValidator.validateRegistration(user, confirmPassword);
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("inputErrors", result.getFieldErrors());
+            return "registration";
+        }
+
+        Map<String, String> errors = userValidator.validateRegistration(userRegistrationDto);
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "registration";
         }
 
-        logger.info("User {} successfully registered", user.getUsername());
+        User user = userMapper.toEntity(userRegistrationDto);
+        log.info("User {} successfully registered", user.getUsername());
         userService.save(user);
         return "login";
     }
@@ -57,13 +66,16 @@ public class Authentication {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
-        Map<String, String> errors = userValidator.validateLogin(username, password);
-        if (!errors.isEmpty()) {
-            model.addAttribute("errors", errors);
+    public String loginUser( @Valid @ModelAttribute("loginDto") LoginDto loginDto, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            log.error("Login Error: {}", result.getFieldErrors());
+            model.addAttribute("errors", result.getFieldErrors());
             return "login";
         }
 
+        String username = loginDto.getUsername();
+        String password = loginDto.getPassword();
         UserDto userDto = userService.findByUsername(username);
 
         if (userDto != null && PasswordHashing.checkPassword(password, userDto.getPassword())) {
@@ -72,7 +84,7 @@ public class Authentication {
             model.addAttribute("role", userDto.getRole());
             cart.initCart();
             model.addAttribute("cart", cart);
-
+            log.info("User: {} logged in", username);
             return "redirect:/api/v1/dashboard";
         } else {
             model.addAttribute("error", Constants.ErrorMessage.LOGIN);
@@ -82,7 +94,8 @@ public class Authentication {
 
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
+        log.info("User {} logged out", session.getAttribute("username"));
         session.invalidate();
-        return "redirect:/auth/v1/login";
+        return "redirect:/api/v1/auth/login";
     }
 }

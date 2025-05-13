@@ -3,11 +3,13 @@ package com.bappi.supershopmanagementsystem.mapper;
 import com.bappi.supershopmanagementsystem.dto.UserInfoDto;
 import com.bappi.supershopmanagementsystem.dto.UserRegistrationDto;
 import com.bappi.supershopmanagementsystem.model.User;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
+@NoArgsConstructor
 public class UserMapper {
 
     public User toEntity(UserRegistrationDto userRegistrationDto) {

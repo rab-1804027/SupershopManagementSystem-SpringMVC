@@ -4,8 +4,6 @@ import com.bappi.supershopmanagementsystem.dto.SaleDto;
 import com.bappi.supershopmanagementsystem.model.Sale;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @Component

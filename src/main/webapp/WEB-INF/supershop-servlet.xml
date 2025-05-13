@@ -2,25 +2,58 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/mvc
-                           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <mvc:annotation-driven />
-    <!--    <context:component-scan base-package = "controller, model, dao, service" /> &lt;!&ndash; only scan controller package and create bean of that classes &ndash;&gt;-->
-    <context:component-scan base-package="com.bappi.supershopmanagementsystem"/> <!-- scan all the packages and create bean of the classes inside the packages -->
+    <context:component-scan base-package="com.bappi.supershopmanagementsystem" />
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" name="viewResolver">
-        <property name="prefix" value="/WEB-INF/views/" /> <!-- prefix means the folder location, where our view pages will reside -->
-        <property name="suffix" value=".jsp" /> <!-- suffix means the ending of how our view page will end | and page name will be decided from our controller -->
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
     </bean>
 
     <bean id="modelMapper" class="org.modelmapper.ModelMapper" />
 
+    <!-- Load properties from classpath:application.properties -->
+    <context:property-placeholder location="classpath:application.properties" />
+
+    <!-- DataSource -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${db.mysql.driver}" />
+        <property name="url" value="${db.mysql.url}" />
+        <property name="username" value="${db.mysql.username}" />
+        <property name="password" value="${db.mysql.password}" />
+    </bean>
+
+    <!-- EntityManagerFactory -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.bappi.supershopmanagementsystem.model"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.show_sql">false</prop>
+            </props>
+        </property>
+    </bean>
+    <tx:annotation-driven/>
+
+    <!-- Transaction Manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <!-- Persistence Exception Translation -->
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
 </beans>

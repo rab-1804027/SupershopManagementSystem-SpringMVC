@@ -2,17 +2,19 @@ package com.bappi.supershopmanagementsystem.dao;
 
 import com.bappi.supershopmanagementsystem.dto.ProductDto;
 import com.bappi.supershopmanagementsystem.model.Product;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Repository
 public class ProductDao {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
 
     public void save(Product product){
         entityManager.persist(product);

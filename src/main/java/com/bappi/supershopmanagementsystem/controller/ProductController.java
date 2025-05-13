@@ -14,6 +14,7 @@ import com.bappi.supershopmanagementsystem.utils.FormatTime;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/api/v1/product")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
 
     private final ProductValidator productValidator;
@@ -38,8 +40,6 @@ public class ProductController {
     private final SaleService saleService;
     private final UserService userService;
     private final SaleDetailsService saleDetailsService;
-
-    Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("/form")
     public String getProductForm(){
@@ -60,7 +60,6 @@ public class ProductController {
 
     @GetMapping("/saleRecords")
     public String getSaleRecords(@SessionAttribute("userId") int userId, Model model){
-
         List<SaleDto> saleRecords = saleService.findAllByUserId(userId);
         model.addAttribute("saleRecords", saleRecords);
         return "saleRecords";
@@ -80,6 +79,7 @@ public class ProductController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=Invoice_" + saleId + ".pdf");
+        log.info("Invoice of saleId:{} successfully generated", saleId);
 
         return ResponseEntity
                 .ok()
@@ -96,6 +96,7 @@ public class ProductController {
              return "productForm";
          }
          productService.save(userId, productDto);
+         log.info("Product {} successfully added", productDto.getName());
          return "redirect:/api/v1/dashboard";
     }
 
@@ -104,19 +105,20 @@ public class ProductController {
         Product product = modelMapper.map(productDto, Product.class);
         product.setId(id);
         productService.update(product);
+        log.info("Product {} successfully updated", product.getName());
         return "redirect:/api/v1/dashboard";
     }
 
     @PostMapping("/cart/add")
-    public String addToCart(@SessionAttribute("cart") ProductCart cart, @RequestParam("id") int id, @RequestParam("quantity") int quantity, Model model){
+    public String addToCart(@SessionAttribute("cart") ProductCart cart, @RequestParam("id") int id,
+                            @RequestParam("quantity") int quantity, Model model){
 
         Product product = productService.findById(id);
-
         String error = productValidator.validateCartItemQuantity(quantity, product.getStockQuantity());
 
         if(error != null)
         {
-            logger.error("Quantity::{} is not valid for product::{}", quantity, product.getName());
+            log.info("Quantity of {} is not valid. Error: {}", product.getName(), error);
             model.addAttribute("error", error);
             return "forward:/api/v1/dashboard";
         }
@@ -147,6 +149,7 @@ public class ProductController {
         saleDetailsService.save(sale, cart);
         cart.clearCart();
         model.addAttribute("cart", cart);
+        log.info("Sale {} successfully completed", sale.getId());
 
         return "forward:/api/v1/product/invoice?saleId=" + sale.getId();
     }

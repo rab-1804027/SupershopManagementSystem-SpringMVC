@@ -2,8 +2,8 @@ package com.bappi.supershopmanagementsystem.dao;
 
 import com.bappi.supershopmanagementsystem.dto.SaleDto;
 import com.bappi.supershopmanagementsystem.model.Sale;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -7,26 +7,23 @@ import com.bappi.supershopmanagementsystem.mapper.UserMapper;
 import com.bappi.supershopmanagementsystem.model.Product;
 import com.bappi.supershopmanagementsystem.model.User;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Transactional
+@RequiredArgsConstructor
 public class UserDao {
 
-    UserMapper userMapper;
-
-    UserDao(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private final UserMapper userMapper;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
 
     public void save(User user) {
         entityManager.persist(user);
