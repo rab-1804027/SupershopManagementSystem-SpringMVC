@@ -20,10 +20,8 @@
 
     <bean id="modelMapper" class="org.modelmapper.ModelMapper" />
 
-    <!-- Load properties from classpath:application.properties -->
     <context:property-placeholder location="classpath:application.properties" />
 
-    <!-- DataSource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${db.mysql.driver}" />
         <property name="url" value="${db.mysql.url}" />
@@ -31,7 +29,6 @@
         <property name="password" value="${db.mysql.password}" />
     </bean>
 
-    <!-- EntityManagerFactory -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="com.bappi.supershopmanagementsystem.model"/>
@@ -40,20 +37,19 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">false</prop>
             </props>
         </property>
     </bean>
+
     <tx:annotation-driven/>
 
-    <!-- Transaction Manager -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-    <!-- Persistence Exception Translation -->
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
 </beans>

@@ -1,26 +1,19 @@
 package com.bappi.supershopmanagementsystem.controller;
 
-import com.bappi.supershopmanagementsystem.dto.LoginDto;
+import com.bappi.supershopmanagementsystem.dto.LoginRequestDto;
 import com.bappi.supershopmanagementsystem.dto.UserDto;
-import com.bappi.supershopmanagementsystem.dto.UserRegistrationDto;
-import com.bappi.supershopmanagementsystem.mapper.UserMapper;
+import com.bappi.supershopmanagementsystem.dto.RegistrationRequestDto;
 import com.bappi.supershopmanagementsystem.model.ProductCart;
-import com.bappi.supershopmanagementsystem.model.User;
 import com.bappi.supershopmanagementsystem.service.UserService;
 import com.bappi.supershopmanagementsystem.utils.Constants;
-import com.bappi.supershopmanagementsystem.utils.PasswordHashing;
-import com.bappi.supershopmanagementsystem.validation.UserValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
@@ -30,43 +23,33 @@ import java.util.Map;
 public class AuthController {
 
     private final UserService userService;
-    private final UserValidator userValidator;
-    private final UserMapper userMapper;
     private final ProductCart cart;
-    private final ModelMapper modelMapper;
 
     @GetMapping("/register")
-    public String getRegistration() {
+    public String registration() {
         return "registration";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("userRegistrationDto") UserRegistrationDto userRegistrationDto, BindingResult result, Model model) {
+    public String registerUser(@Valid @ModelAttribute("registrationRequestDto") RegistrationRequestDto registrationRequestDto, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("inputErrors", result.getFieldErrors());
             return "registration";
         }
 
-        Map<String, String> errors = userValidator.validateRegistration(userRegistrationDto);
-        if (!errors.isEmpty()) {
-            model.addAttribute("errors", errors);
-            return "registration";
-        }
-
-        User user = userMapper.toEntity(userRegistrationDto);
-        log.info("User {} successfully registered", user.getUsername());
-        userService.save(user);
+        userService.save(registrationRequestDto);
+        log.info("User {} successfully registered", registrationRequestDto.getUsername());
         return "login";
     }
 
     @GetMapping("/login")
-    public String getLogin() {
+    public String login() {
         return "login";
     }
 
     @PostMapping("/login")
-    public String loginUser( @Valid @ModelAttribute("loginDto") LoginDto loginDto, BindingResult result, Model model) {
+    public String loginUser(@Valid @ModelAttribute("loginRequestDto") LoginRequestDto loginRequestDto, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             log.error("Login Error: {}", result.getFieldErrors());
@@ -74,17 +57,15 @@ public class AuthController {
             return "login";
         }
 
-        String username = loginDto.getUsername();
-        String password = loginDto.getPassword();
-        UserDto userDto = userService.findByUsername(username);
+        UserDto userDto = userService.findUser(loginRequestDto);
 
-        if (userDto != null && PasswordHashing.checkPassword(password, userDto.getPassword())) {
+        if (userDto != null) {
             model.addAttribute("userId", userDto.getId());
-            model.addAttribute("username", username);
+            model.addAttribute("username", loginRequestDto.getUsername());
             model.addAttribute("role", userDto.getRole());
             cart.initCart();
             model.addAttribute("cart", cart);
-            log.info("User: {} logged in", username);
+            log.info("User: {} logged in", loginRequestDto.getUsername());
             return "redirect:/api/v1/dashboard";
         } else {
             model.addAttribute("error", Constants.ErrorMessage.LOGIN);

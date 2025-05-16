@@ -7,6 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <html>
 <head>
     <style>
@@ -80,16 +82,13 @@
             <input type="text" name="name" placeholder="Enter Your Name" >
             <br>
             <input type="email" name="email" placeholder="Enter Your Email Address" >
-            ${errors.get("email")}
             <br>
             <input type="text" name="username" placeholder="Enter a Username" >
-            ${errors.get("username")}
             <br>
             <input type="password" name="password" placeholder="Set a Password" >
             <br>
             ${inputUser}
             <input type="password" name="confirmPassword" placeholder="Repeat the password" >
-            ${errors.get("passwordMismatch")}
             <br>
             <input type="submit" value="Register">
         </form>

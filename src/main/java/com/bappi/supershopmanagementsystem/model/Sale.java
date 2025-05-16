@@ -24,9 +24,6 @@ public class Sale {
     private User user;
     private double totalPrice;
     private LocalDateTime saleTime;
-//    @JsonManagedReference
-//    @OneToMany(mappedBy = "sale", fetch = FetchType.EAGER)
-//    private Set<SaleDetails> saleDetails;
 
     public Sale(User user, double totalPrice) {
         this.user = user;

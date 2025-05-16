@@ -39,7 +39,6 @@ public class DashboardController {
                 model.addAttribute("error", "Your registration is not approved yet. Please contact the admin for more details. Thank you for your patience.");
                 return "login";
             }
-
         }
     }
 

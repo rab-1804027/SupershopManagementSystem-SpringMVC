@@ -1,7 +1,7 @@
 package com.bappi.supershopmanagementsystem.mapper;
 
 import com.bappi.supershopmanagementsystem.dto.UserInfoDto;
-import com.bappi.supershopmanagementsystem.dto.UserRegistrationDto;
+import com.bappi.supershopmanagementsystem.dto.RegistrationRequestDto;
 import com.bappi.supershopmanagementsystem.model.User;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,12 +12,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserMapper {
 
-    public User toEntity(UserRegistrationDto userRegistrationDto) {
+    public User toEntity(RegistrationRequestDto userRegistrationDto) {
         String name = userRegistrationDto.getName();
         String email = userRegistrationDto.getEmail();
         String username = userRegistrationDto.getUsername();
         String password = userRegistrationDto.getPassword();
-        return new User(name, email, username, password);
+        return User.builder()
+                .name(name)
+                .email(email)
+                .username(username)
+                .password(password).build();
     }
 
     public UserInfoDto toInfoDto(User user){

@@ -2,9 +2,7 @@ package com.bappi.supershopmanagementsystem.model;
 
 import com.bappi.supershopmanagementsystem.enums.ApprovalStatus;
 import jdk.jfr.Enabled;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -14,29 +12,28 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@Builder
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
-    private String role;
-    private LocalDateTime registrationTime;
+    @Builder.Default
+    private String role = "null";
+    @Builder.Default
+    private LocalDateTime registrationTime = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
-    private ApprovalStatus approvalStatus;
+    @Builder.Default
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
     @ToString.Exclude
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     private List<Product> productList;
 
-    public User(String name, String email, String username, String password) {
-        this.name = name;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.role = "null";
-        this.registrationTime = LocalDateTime.now();
-        this.approvalStatus = ApprovalStatus.PENDING;
-    }
 }
